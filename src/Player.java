@@ -5,27 +5,35 @@ public class Player extends Thread {
     protected String player;
     protected Player opponent;
     protected Socket socket;
-    protected ObjectInputStream in;
-    protected PrintWriter out;
-    protected BufferedReader read;
+    protected ObjectOutputStream objOut;
+    protected PrintWriter textOut;
+    protected BufferedReader textIn;
     protected Game game;
+
+    protected int points;
+    protected int opponentPoints;
+
+
 
     public Player(Socket socket, String player,Game game) {
         this.socket = socket;
         this.player = player;
         this.game = game;
-        System.out.println(player + " ansluten");
 
         try{
-            in = new ObjectInputStream(socket.getInputStream());
-            out = new PrintWriter(socket.getOutputStream(), true);
-            read = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("Välkommen:" + player);
-            System.out.println("Väntar på motståndare");
+//            objIn = new ObjectInputStream(socket.getInputStream());
+            textOut = new PrintWriter(socket.getOutputStream(), true);
+            textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            textOut.println("Välkommen " + player);
+            textOut.println("Väntar på motståndare");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getPlayer() {
+        return player;
     }
 
     public Player getOpponent() {
@@ -36,20 +44,46 @@ public class Player extends Thread {
         this.opponent = opponent;
     }
 
+    public void checkWinner(){
+
+        if(points > opponentPoints){
+            textOut.println("Du vann!");
+        }
+        else if(opponentPoints > points){
+            textOut.println("Du förlorade!");
+        }
+        else textOut.println("Det blev oavgjort!");
+    }
+
     @Override
     public void run() {
-        try{
-            System.out.println("Väntar på motståndaren");
-            String alt1 = read.readLine();
-            String alt2 = read.readLine();
-            String alt3 = read.readLine();
-            String alt4 = read.readLine();
+        try {
+            objOut = new ObjectOutputStream(socket.getOutputStream());
+            BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
+            String command = textIn.readLine();
+            while(true){
+                if(command.startsWith("CHOICE") && game.currentPlayer.getPlayer().equals(player)){
+                    String[] categories = game.getCategory();
+                    System.out.println(categories[1] + ", " +  categories[2] + ", " + categories[3] + ", " +  categories[4]);
+                    objOut.writeObject(game.getQuestions(categories[sysIn.read()]));
+                }
 
-            System.out.println(alt1);
-            System.out.println(alt2);
-            System.out.println(alt3);
-            System.out.println(alt4);
+
+            }
+
+            //Player Rad 83
+
 
         }catch (Exception ignore){}
     }
 }
+
+
+
+//if(game.currentPlayer.getPlayer().equals(player)){
+//        textOut.println("Välj kategori: ");
+//        String[] category = game.getCategory();
+//        textOut.println(category[1] + ", " +  category[2] + ", " + category[3] + ", " +  category[4]);
+//        choice = textIn.readLine();
+//        }
+//        Category questions = game.getQuestions(choice);

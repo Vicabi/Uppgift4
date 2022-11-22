@@ -4,7 +4,7 @@ public class Questions {
     private String a2;
     private String a3;
     private String a4;
-    private final String correctAnswer;
+    private String correctAnswer;
 
     public Questions(String q, String a1, String a2, String a3, String a4, String correctAnswer) {
         this.q = q;
@@ -14,6 +14,7 @@ public class Questions {
         this.a4 = a4;
         this.correctAnswer = correctAnswer;
     }
+    public Questions(){};
 
     public String getQ() {
         return q;

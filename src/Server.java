@@ -15,11 +15,8 @@ public class Server {
                 player1.setOpponent(player2);
                 player2.setOpponent(player1);
                 game.currentPlayer = player1;
-                game.player1 = player1;
-                game.player2 = player2;
                 player1.start();
                 player2.start();
-                game.start();
                 System.out.println("Slutet av main loop");
 
             }
