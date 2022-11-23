@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Film {
+public class Film extends Category {
 
     protected String category = "Film";
     Questions film1 = new Questions("Vilken är den mest inkomstbringande filmen genom tiderna?", "Avatar", "Avengers: Endgame", "Titanic", "Frozen", "Avatar");

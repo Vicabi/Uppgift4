@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Mat {
+public class Mat extends Category {
 
     protected String category = "Mat";
     Questions mat1 = new Questions("Vilket datum firas kanelbullens dag?", "4 september", "4 oktober", "3 september", "4 juni", "4 oktober");
