@@ -6,7 +6,7 @@ public class Player extends Thread {
     protected Player opponent;
     protected Socket socket;
     protected ObjectOutputStream objOut;
-    protected BufferedReader textIn;
+    protected ObjectInputStream objIn;
     protected Game game;
 
     protected int points;
@@ -20,7 +20,7 @@ public class Player extends Thread {
         this.game = game;
 
         objOut = new ObjectOutputStream(socket.getOutputStream());
-        textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        objIn = new ObjectInputStream((socket.getInputStream()));
         objOut.writeObject("Välkommen " + player);
         objOut.writeObject("Väntar på motståndare");
 
@@ -54,12 +54,12 @@ public class Player extends Thread {
         try {
 //            objOut = new ObjectOutputStream(socket.getOutputStream());
             BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
-            String command = textIn.readLine();
+            Protocol protocol = new Protocol();
             while(true){
-                if(command.startsWith("CHOICE") && game.currentPlayer.getPlayer().equals(player)){
-                    String[] categories = game.getCategory();
-                    System.out.println(categories[1] + ", " +  categories[2] + ", " + categories[3] + ", " +  categories[4]);
-                    objOut.writeObject(game.getQuestions(categories[sysIn.read()]));
+                if(game.currentPlayer.getPlayer().equals(player)){
+                    objOut.writeObject(protocol.getCategory());
+                    protocol.getOutput(((String)objIn.readObject()));
+
                 }
 
 
