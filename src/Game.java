@@ -47,9 +47,13 @@ public class Game {
 
 
     Historia historia = new Historia();
-
+    Sport sport = new Sport();
+    Film film = new Film();
+    Geografi geografi = new Geografi();
+    Mat mat = new Mat();
+    Matematik matematik = new Matematik();
     String[] kategori = {"Historia", "Sport", "Film", "Geografi", "Mat", "Matematik"};
-    List<Category> allCategories = List.of(historia);
+    List<Category> allCategories = List.of(historia, sport, film, geografi, mat, matematik);
 
     //Lista med alla kategorier som objekt!
 }

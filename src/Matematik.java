@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Matematik {
+public class Matematik extends Category{
 
     protected String category = "Matematik";
     Questions matematik1 = new Questions("Vad väger mer, ett kilo fjäder eller ett kilo stål?", "Ett kilo stål", "Dem väger lika mycket", "Ett kilo fjäder", "Går ej att avgöra", "Dem väger lika mycket");

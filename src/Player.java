@@ -6,7 +6,6 @@ public class Player extends Thread {
     protected Player opponent;
     protected Socket socket;
     protected ObjectOutputStream objOut;
-    protected PrintWriter textOut;
     protected BufferedReader textIn;
     protected Game game;
 
@@ -15,21 +14,16 @@ public class Player extends Thread {
 
 
 
-    public Player(Socket socket, String player,Game game) {
+    public Player(Socket socket, String player,Game game) throws IOException {
         this.socket = socket;
         this.player = player;
         this.game = game;
 
-        try{
-//            objIn = new ObjectInputStream(socket.getInputStream());
-            textOut = new PrintWriter(socket.getOutputStream(), true);
-            textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            textOut.println("Välkommen " + player);
-            textOut.println("Väntar på motståndare");
+        objOut = new ObjectOutputStream(socket.getOutputStream());
+        textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        objOut.writeObject("Välkommen " + player);
+        objOut.writeObject("Väntar på motståndare");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public String getPlayer() {
@@ -46,19 +40,19 @@ public class Player extends Thread {
 
     public void checkWinner(){
 
-        if(points > opponentPoints){
-            textOut.println("Du vann!");
-        }
-        else if(opponentPoints > points){
-            textOut.println("Du förlorade!");
-        }
-        else textOut.println("Det blev oavgjort!");
+//        if(points > opponentPoints){
+//            textOut.println("Du vann!");
+//        }
+//        else if(opponentPoints > points){
+//            textOut.println("Du förlorade!");
+//        }
+//        else textOut.println("Det blev oavgjort!");
     }
 
     @Override
     public void run() {
         try {
-            objOut = new ObjectOutputStream(socket.getOutputStream());
+//            objOut = new ObjectOutputStream(socket.getOutputStream());
             BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
             String command = textIn.readLine();
             while(true){

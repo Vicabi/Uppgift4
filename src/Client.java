@@ -7,20 +7,17 @@ public class Client {
     protected Socket socket;
     protected ObjectInputStream objIn;
     protected PrintWriter textOut;
-    protected BufferedReader textIn;
 
 
     public Client(String serverAddress) throws Exception {
 
         socket = new Socket(serverAddress, PORT);
-//        objIn = new ObjectInputStream(socket.getInputStream());
+        objIn = new ObjectInputStream(socket.getInputStream());
         textOut = new PrintWriter(socket.getOutputStream(), true);
-        textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
     }
 
-    public void play() throws IOException {
-        String choice;
+    public void play() throws Exception {
+        Object choice;
         String player = "TEMP_PLAYER1";
         String opponent = "TEMP_PLAYER2";
         Object tempObj;
@@ -28,9 +25,10 @@ public class Client {
         System.out.println("I början av play - " + player);
         try {
             System.out.println("Början av try i play");
-            choice = textIn.readLine();
-            if (choice.startsWith("Välkommen")) {
-                player = choice.substring(10);
+            choice = objIn.readObject();
+            String s = (String) choice;
+            if (s.startsWith("Välkommen")) {
+                player = s.substring(10);
                 System.out.println("Spelarens namn " + player);
                 if (player.equals("Spelare 1")) {
                     opponent = "Spelare 2";

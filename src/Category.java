@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.List;
 
-public class Category {
+public class Category implements Serializable {
     protected String category;
 
     Questions q1 = new Questions();
