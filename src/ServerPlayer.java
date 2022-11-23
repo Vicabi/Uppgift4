@@ -1,9 +1,9 @@
 import java.io.*;
 import java.net.Socket;
 
-public class Player extends Thread {
+public class ServerPlayer extends Thread {
     protected String player;
-    protected Player opponent;
+    protected ServerPlayer opponent;
     protected Socket socket;
     protected ObjectOutputStream objOut;
     protected ObjectInputStream objIn;
@@ -14,14 +14,14 @@ public class Player extends Thread {
 
 
 
-    public Player(Socket socket, String player,Game game) throws IOException {
+    public ServerPlayer(Socket socket, String player, Game game) throws IOException {
         this.socket = socket;
         this.player = player;
         this.game = game;
 
-        objOut = new ObjectOutputStream(socket.getOutputStream());
-        objIn = new ObjectInputStream((socket.getInputStream()));
-        objOut.writeObject("Välkommen " + player);
+        objOut = new ObjectOutputStream(this.socket.getOutputStream());
+//        objIn = new ObjectInputStream(this.socket.getInputStream());     //Väntar på något???
+        objOut.writeObject("Välkommen " + getPlayer());
         objOut.writeObject("Väntar på motståndare");
 
     }
@@ -30,11 +30,11 @@ public class Player extends Thread {
         return player;
     }
 
-    public Player getOpponent() {
+    public ServerPlayer getOpponent() {
         return opponent;
     }
 
-    public void setOpponent(Player opponent) {
+    public void setOpponent(ServerPlayer opponent) {
         this.opponent = opponent;
     }
 
@@ -52,8 +52,7 @@ public class Player extends Thread {
     @Override
     public void run() {
         try {
-//            objOut = new ObjectOutputStream(socket.getOutputStream());
-            BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
+            objIn = new ObjectInputStream(socket.getInputStream());
             Protocol protocol = new Protocol();
             while(true){
                 if(game.currentPlayer.getPlayer().equals(player)){

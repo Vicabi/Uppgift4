@@ -8,9 +8,11 @@ public class Server {
         try {
             while (true) {
                 Game game = new Game();
-
-                Player player1 = new Player(listener.accept(), "Spelare 1",game);
-                Player player2 = new Player(listener.accept(),"Spelare 2",game);
+                System.out.println("Game skapat");
+                ServerPlayer player1 = new ServerPlayer(listener.accept(), "Spelare 1",game);
+                System.out.println("Spelare 1 ansluten");
+                ServerPlayer player2 = new ServerPlayer(listener.accept(),"Spelare 2",game);
+                System.out.println("Spelare 2 ansluten");
 
                 player1.setOpponent(player2);
                 player2.setOpponent(player1);

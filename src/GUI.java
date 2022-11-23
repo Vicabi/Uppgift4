@@ -28,8 +28,7 @@ public class GUI extends JFrame {
     private JLabel resultJLabel;
     private JLabel player2JLabel;
 
-    public GUI(String title) {
-        super(title);
+    public GUI() {
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);

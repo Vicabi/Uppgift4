@@ -1,9 +1,6 @@
-import java.util.Arrays;
-import java.util.List;
-
 public class Game {
     private int rounds;
-    protected Player currentPlayer;
+    protected ServerPlayer currentPlayer;
     protected int p1points;
     protected int p2points;
 
@@ -23,11 +20,11 @@ public class Game {
         this.p2points = p2points;
     }
 
-    public Player getCurrentPlayer() {
+    public ServerPlayer getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
+    public void setCurrentPlayer(ServerPlayer currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
 
