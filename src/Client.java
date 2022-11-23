@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -24,6 +27,9 @@ public class Client {
         while (true) {
             String serverAddress = (args.length == 0) ? "localhost" : args[1];
             Client client = new Client(serverAddress);
+            JFrame frame = new GUI("Quizkampen");
+            frame.setVisible(true);
             }
         }
-    }
+
+}
