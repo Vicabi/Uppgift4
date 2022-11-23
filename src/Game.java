@@ -48,7 +48,7 @@ public class Game {
 
     Historia historia = new Historia();
 
-    String[] kategori = {"Historia", "Sport", "Film & Serier", "Geografi", "Mat", "Matematik"};
+    String[] kategori = {"Historia", "Sport", "Film", "Geografi", "Mat", "Matematik"};
     List<Category> allCategories = List.of(historia);
 
     //Lista med alla kategorier som objekt!
