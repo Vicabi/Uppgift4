@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Properties;
 
 public class ServerPlayer extends Thread {
     protected String player;
@@ -12,12 +13,14 @@ public class ServerPlayer extends Thread {
     protected int points;
     protected int opponentPoints;
 
-
+    protected boolean[][] resultArray;
 
     public ServerPlayer(Socket socket, String player, Game game) throws IOException {
         this.socket = socket;
         this.player = player;
         this.game = game;
+
+        resultArray = generateArray();
 
         objOut = new ObjectOutputStream(this.socket.getOutputStream());
 //        objIn = new ObjectInputStream(this.socket.getInputStream());     //Väntar på något???
@@ -47,6 +50,17 @@ public class ServerPlayer extends Thread {
 //            textOut.println("Du förlorade!");
 //        }
 //        else textOut.println("Det blev oavgjort!");
+    }
+    public boolean[][] generateArray(){
+        Properties properties = new Properties();
+        try{
+            properties.load(new FileInputStream("src/Properties.properties"));
+        }catch (IOException e){
+            System.out.println("Kunde inte läsa properties");
+        }
+        int questions = Integer.parseInt(properties.getProperty("QUESTIONS", "2"));
+        int maxRounds = Integer.parseInt(properties.getProperty("ROUNDS", "2"));
+        return new boolean[questions][maxRounds];
     }
 
     @Override

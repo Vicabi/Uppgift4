@@ -1,0 +1,10 @@
+GUI -> ServerPlayer
+Category
+Answers
+
+ServerPlayer -> GUI
+Intro --
+Waiting --
+Category --
+Questions --
+GameFinished --

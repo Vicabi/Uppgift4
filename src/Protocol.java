@@ -42,17 +42,17 @@ public class Protocol {
         numberOfQuestions = Integer.parseInt(properties.getProperty("QUESTIONS", "2"));
 
         if (state == INITIAL) {
-            state = WAITING;
-
             output = new Intro();
+
+            state = WAITING;
         } else if (state == WAITING) {
             output = new Waiting();
 
             state = SENDING;
         } else if (state == SENDING) {
             output = getCategory();
-            currentRound++;
 
+            currentRound++;
             state = CHOOSING;
         } else if (state == CHOOSING) {
             output = getQuestions(numberOfQuestions, playerChoice);
