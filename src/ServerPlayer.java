@@ -69,14 +69,13 @@ public class ServerPlayer extends Thread {
             objIn = new ObjectInputStream(socket.getInputStream());
             Protocol protocol = new Protocol();
             while(true){
-                if(game.currentPlayer.getPlayer().equals(player)){
-                    objOut.writeObject(protocol.getCategory());
-                    protocol.getOutput(((String)objIn.readObject()));
-
+                System.out.println("ServerPlayer run");
+                if(protocol.state != protocol.CHOOSING){
+                    objOut.writeObject(protocol.getOutput(null));
                 }
-
-
+                else objOut.writeObject(protocol.getOutput((String) objIn.readObject()));
             }
+
 
             //Player Rad 83
 

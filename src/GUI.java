@@ -55,6 +55,11 @@ public class GUI extends JFrame {
         this.setSize(300, 400);
         this.setLocationRelativeTo(null);
         setVisible(true);
+        mainPanel.add(homeScreen);
+        mainPanel.add(loadingScreen);
+        mainPanel.add(categoryScreen);
+        mainPanel.add(gameScreen);
+        mainPanel.add(resultScreen);
 
         newGameButton.addActionListener(new ActionListener() { // Knapp för att starta spelet
             @Override
@@ -114,7 +119,9 @@ public class GUI extends JFrame {
         Object fromServer;
         String player = "TEMP_PLAYER1";
         String opponent = "TEMP_PLAYER2";
+        String turn = player;
         try {
+            System.out.println("GUI play");
             fromServer = objIn.readObject();
             if(fromServer instanceof String){
                 String s = (String) fromServer;
@@ -124,32 +131,71 @@ public class GUI extends JFrame {
                         opponent = "Spelare 2";
                     } else opponent = "Spelare 1";
                 }
+                System.out.println("Spelare - "+player);
+                setTitle(player);
             }
+            System.out.println("Innan loop i play");
+            while(true){
+                fromServer = objIn.readObject();
             if (fromServer instanceof Intro) {
-
-
+                System.out.println("instanceof intro");
+                homeScreen.setVisible(true);
+                loadingScreen.setVisible(false);
+                categoryScreen.setVisible(false);
+                gameScreen.setVisible(false);
+                resultScreen.setVisible(false);
 
             } else if (fromServer instanceof Waiting) {
+                System.out.println("instanceof waiting");
                 homeScreen.setVisible(false);
                 loadingScreen.setVisible(true);
                 categoryScreen.setVisible(false);
                 gameScreen.setVisible(false);
                 resultScreen.setVisible(false);
+
             } else if (fromServer instanceof List<?>) {
+                System.out.println("instanceof list");
+                try{
+                    listQuestions = (List<Questions>) fromServer;
+                    listString = (List<String>) fromServer;
+                }catch (Exception ignore){}
+
+                if(!listQuestions.isEmpty() && listQuestions.get(0) instanceof Questions){
+
+                    homeScreen.setVisible(false);
+                    loadingScreen.setVisible(false);
+                    categoryScreen.setVisible(false);
+                    gameScreen.setVisible(true);
+                    resultScreen.setVisible(false);
+
+                }
+                if(!listString.isEmpty() && listString.get(0) instanceof String){
+                    categoryJLabel.setText("Välj kategori");
+                    category1Button.setText(listString.get(1));
+                    category2Button.setText(listString.get(2));
+                    category3Button.setText(listString.get(3));
+                    category4Button.setText(listString.get(4));
+
+                    homeScreen.setVisible(false);
+                    loadingScreen.setVisible(false);
+                    categoryScreen.setVisible(true);
+                    gameScreen.setVisible(false);
+                    resultScreen.setVisible(false);
+
+                }
+            }
+            else if (fromServer instanceof GameFinished) {
+                System.out.println("instanceof gamefinished");
                 homeScreen.setVisible(false);
                 loadingScreen.setVisible(false);
-                categoryScreen.setVisible(true);
+                categoryScreen.setVisible(false);
                 gameScreen.setVisible(false);
-                resultScreen.setVisible(false);
+                resultScreen.setVisible(true);
 
-                listString = (List<String>) fromServer;
-                categoryJLabel.setText("Välj kategori");
-                category1Button.setText(listString.get(1));
-                category2Button.setText(listString.get(2));
-                category3Button.setText(listString.get(3));
-                category4Button.setText(listString.get(4));
+                //Check winner
+
             }
-        } finally {
+        } }finally {
             socket.close();
         }
 
@@ -161,16 +207,9 @@ public class GUI extends JFrame {
     }
 
     public static void main(String[] args) throws Exception {
-        while (true) {
             String serverAddress = (args.length == 0) ? "localhost" : args[1];
             GUI client = new GUI(serverAddress);
             client.play();
 
-            if (!client.playAgain()) {
-                break;
-            }
-        }
-
     }
-
 }

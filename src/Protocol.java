@@ -42,28 +42,34 @@ public class Protocol {
         numberOfQuestions = Integer.parseInt(properties.getProperty("QUESTIONS", "2"));
 
         if (state == INITIAL) {
+            System.out.println("initial state");
             output = new Intro();
 
             state = WAITING;
         } else if (state == WAITING) {
+            System.out.println("waiting state");
             output = new Waiting();
 
             state = SENDING;
         } else if (state == SENDING) {
+            System.out.println("sending state");
             output = getCategory();
 
             currentRound++;
             state = CHOOSING;
         } else if (state == CHOOSING) {
+            System.out.println("choosing state");
             output = getQuestions(numberOfQuestions, playerChoice);
 
             state = ANSWERING;
         } else if (state == ANSWERING) {
+            System.out.println("answering state");
             if(currentRound < maxRounds){
                 state = SENDING;
             }else state = FINISHED;
 
         } else if (state == FINISHED) {
+            System.out.println("finished state");
             output = new GameFinished();
         }
 
