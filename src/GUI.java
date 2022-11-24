@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -42,6 +43,9 @@ public class GUI extends JFrame {
 
     protected List<String> listString;
     protected List<Questions> listQuestions;
+    protected boolean[] answers;
+    protected int currentQuestion;
+    protected boolean answered;
 
     public GUI(String serverAddress) throws IOException {
 
@@ -113,6 +117,66 @@ public class GUI extends JFrame {
 
             }
         });
+
+        answerOptions1Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //kolla om alternativ 1 är rätt
+                answered = true;
+                if (listQuestions.get(0).getA1().equals(listQuestions.get(0).getCorrectAnswer())) {
+                    answers[currentQuestion] = true;
+                    answerOptions1Button.setBackground(Color.GREEN);
+                } else {
+                    answers[currentQuestion] = false;
+                    answerOptions1Button.setBackground(Color.RED);
+                }
+
+            }
+        });
+
+        answerOptions2Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                answered = true;
+                if (listQuestions.get(0).getA2().equals(listQuestions.get(0).getCorrectAnswer())) {
+                    answers[currentQuestion] = true;
+                    answerOptions2Button.setBackground(Color.GREEN);
+                } else {
+                    answers[currentQuestion] = false;
+                    answerOptions2Button.setBackground(Color.RED);
+                }
+
+            }
+        });
+
+        answerOptions3Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                answered = true;
+                if (listQuestions.get(0).getA3().equals(listQuestions.get(0).getCorrectAnswer())) {
+                    answers[currentQuestion] = true;
+                    answerOptions3Button.setBackground(Color.GREEN);
+                } else {
+                    answers[currentQuestion] = false;
+                    answerOptions3Button.setBackground(Color.RED);
+                }
+
+            }
+        });
+
+        answerOptions4Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                answered = true;
+                if (listQuestions.get(0).getA4().equals(listQuestions.get(0).getCorrectAnswer())) {
+                    answers[currentQuestion] = true;
+                    answerOptions4Button.setBackground(Color.GREEN);
+                } else {
+                    answers[currentQuestion] = false;
+                    answerOptions4Button.setBackground(Color.RED);
+                }
+            }
+        });
     }
 
     public void play() throws Exception {
@@ -123,7 +187,7 @@ public class GUI extends JFrame {
         try {
             System.out.println("GUI play");
             fromServer = objIn.readObject();
-            if(fromServer instanceof String){
+            if (fromServer instanceof String) {
                 String s = (String) fromServer;
                 if (s.startsWith("Välkommen")) {
                     player = s.substring(10);
@@ -131,71 +195,92 @@ public class GUI extends JFrame {
                         opponent = "Spelare 2";
                     } else opponent = "Spelare 1";
                 }
-                System.out.println("Spelare - "+player);
+                System.out.println("Spelare - " + player);
                 setTitle(player);
             }
             System.out.println("Innan loop i play");
-            while(true){
+            while (true) {
                 fromServer = objIn.readObject();
-            if (fromServer instanceof Intro) {
-                System.out.println("instanceof intro");
-                homeScreen.setVisible(true);
-                loadingScreen.setVisible(false);
-                categoryScreen.setVisible(false);
-                gameScreen.setVisible(false);
-                resultScreen.setVisible(false);
-
-            } else if (fromServer instanceof Waiting) {
-                System.out.println("instanceof waiting");
-                homeScreen.setVisible(false);
-                loadingScreen.setVisible(true);
-                categoryScreen.setVisible(false);
-                gameScreen.setVisible(false);
-                resultScreen.setVisible(false);
-
-            } else if (fromServer instanceof List<?>) {
-                System.out.println("instanceof list");
-                try{
-                    listQuestions = (List<Questions>) fromServer;
-                    listString = (List<String>) fromServer;
-                }catch (Exception ignore){}
-
-                if(!listQuestions.isEmpty() && listQuestions.get(0) instanceof Questions){
-
-                    homeScreen.setVisible(false);
+                if (fromServer instanceof Intro) {
+                    System.out.println("instanceof intro");
+                    homeScreen.setVisible(true);
                     loadingScreen.setVisible(false);
                     categoryScreen.setVisible(false);
-                    gameScreen.setVisible(true);
-                    resultScreen.setVisible(false);
-
-                }
-                if(!listString.isEmpty() && listString.get(0) instanceof String){
-                    categoryJLabel.setText("Välj kategori");
-                    category1Button.setText(listString.get(1));
-                    category2Button.setText(listString.get(2));
-                    category3Button.setText(listString.get(3));
-                    category4Button.setText(listString.get(4));
-
-                    homeScreen.setVisible(false);
-                    loadingScreen.setVisible(false);
-                    categoryScreen.setVisible(true);
                     gameScreen.setVisible(false);
                     resultScreen.setVisible(false);
 
+                } else if (fromServer instanceof Waiting) {
+                    System.out.println("instanceof waiting");
+                    homeScreen.setVisible(false);
+                    loadingScreen.setVisible(true);
+                    categoryScreen.setVisible(false);
+                    gameScreen.setVisible(false);
+                    resultScreen.setVisible(false);
+
+                } else if (fromServer instanceof List<?>) {
+                    System.out.println("instanceof list");
+                    try {
+                        listQuestions = (List<Questions>) fromServer;
+                        listString = (List<String>) fromServer;
+                    } catch (Exception ignore) {
+                    }
+
+                    if (!listQuestions.isEmpty() && listQuestions.get(0) instanceof Questions) {
+                        homeScreen.setVisible(false);
+                        loadingScreen.setVisible(false);
+                        categoryScreen.setVisible(false);
+                        gameScreen.setVisible(true);
+                        resultScreen.setVisible(false);
+
+                        while (!listQuestions.isEmpty()) {
+                            answered = false;
+                            answerOptions1Button.setBackground(Color.WHITE);
+                            answerOptions2Button.setBackground(Color.WHITE);
+                            answerOptions3Button.setBackground(Color.WHITE);
+                            answerOptions4Button.setBackground(Color.WHITE);
+                            questionLabel.setText(listQuestions.get(0).getQ());
+                            answerOptions1Button.setText(listQuestions.get(0).getA1());
+                            answerOptions2Button.setText(listQuestions.get(0).getA2());
+                            answerOptions3Button.setText(listQuestions.get(0).getA3());
+                            answerOptions4Button.setText(listQuestions.get(0).getA4());
+
+                            //Starta timer när spelaren fått frågan
+                            //Få nästa fråga om tiden tar slut eller spelaren ger sitt svar
+//                            startTimer();
+//                            if (answered || timer()) {
+//                                listQuestions.remove(0);
+//                                currentQuestion++;
+//                            }
+                        }
+
+                    }
+                    if (!listString.isEmpty() && listString.get(0) instanceof String) {
+                        categoryJLabel.setText("Välj kategori");
+                        category1Button.setText(listString.get(1));
+                        category2Button.setText(listString.get(2));
+                        category3Button.setText(listString.get(3));
+                        category4Button.setText(listString.get(4));
+
+                        homeScreen.setVisible(false);
+                        loadingScreen.setVisible(false);
+                        categoryScreen.setVisible(true);
+                        gameScreen.setVisible(false);
+                        resultScreen.setVisible(false);
+
+                    }
+                } else if (fromServer instanceof GameFinished) {
+                    System.out.println("instanceof gamefinished");
+                    homeScreen.setVisible(false);
+                    loadingScreen.setVisible(false);
+                    categoryScreen.setVisible(false);
+                    gameScreen.setVisible(false);
+                    resultScreen.setVisible(true);
+
+                    //Check winner
+
                 }
             }
-            else if (fromServer instanceof GameFinished) {
-                System.out.println("instanceof gamefinished");
-                homeScreen.setVisible(false);
-                loadingScreen.setVisible(false);
-                categoryScreen.setVisible(false);
-                gameScreen.setVisible(false);
-                resultScreen.setVisible(true);
-
-                //Check winner
-
-            }
-        } }finally {
+        } finally {
             socket.close();
         }
 
@@ -207,9 +292,9 @@ public class GUI extends JFrame {
     }
 
     public static void main(String[] args) throws Exception {
-            String serverAddress = (args.length == 0) ? "localhost" : args[1];
-            GUI client = new GUI(serverAddress);
-            client.play();
+        String serverAddress = (args.length == 0) ? "localhost" : args[1];
+        GUI client = new GUI(serverAddress);
+        client.play();
 
     }
 }

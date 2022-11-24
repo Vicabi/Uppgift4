@@ -90,6 +90,7 @@ public class Protocol {
                 }
             }
         }
+        //Ta bort använd kategori
         return questions;
     }
 }

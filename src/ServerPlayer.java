@@ -15,6 +15,14 @@ public class ServerPlayer extends Thread {
 
     protected boolean[][] resultArray;
 
+    /*
+
+        [true][false][false]
+        [null][null][null]
+        [null][null][null]
+
+     */
+
     public ServerPlayer(Socket socket, String player, Game game) throws IOException {
         this.socket = socket;
         this.player = player;
