@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 public class Server {
 
     public static void main(String[] args) throws Exception {
+
         ServerSocket listener = new ServerSocket(44444);
 
         try {
