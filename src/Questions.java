@@ -1,4 +1,6 @@
-public class Questions {
+import java.io.Serializable;
+
+public class Questions implements Serializable {
     private String q;
     private String a1;
     private String a2;

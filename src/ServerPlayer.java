@@ -33,7 +33,7 @@ public class ServerPlayer extends Thread {
         objOut = new ObjectOutputStream(this.socket.getOutputStream());
 //        objIn = new ObjectInputStream(this.socket.getInputStream());     //Väntar på något???
         objOut.writeObject("Välkommen " + getPlayer());
-        objOut.writeObject("Väntar på motståndare");
+//        objOut.writeObject("Väntar på motståndare");
 
     }
 
@@ -79,9 +79,14 @@ public class ServerPlayer extends Thread {
             while(true){
                 System.out.println("ServerPlayer run");
                 if(protocol.state != protocol.CHOOSING){
-                    objOut.writeObject(protocol.getOutput(null));
+                    objOut.writeObject(protocol.getOutput(""));
+                    System.out.println("server if");
                 }
-                else objOut.writeObject(protocol.getOutput((String) objIn.readObject()));
+                else {
+                    String temp = (String) objIn.readObject();
+                    objOut.writeObject(protocol.getOutput(temp));
+                    System.out.println("server else");
+                }
             }
 
 

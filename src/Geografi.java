@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Geografi extends Category {
+public class Geografi  {
 
     protected String category = "Geografi";
     Questions geografi1 = new Questions("Vad är Brasiliens huvudstad?", "Rio de Janeiro", "São Paulo", "Brasilia", "Buenos Aires", "Brasilia");

@@ -1,3 +1,4 @@
+import javax.management.QueryExp;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,14 +21,13 @@ public class Protocol {
     protected int maxRounds;
     protected int numberOfQuestions;
 
-    Historia historia = new Historia();
-    Sport sport = new Sport();
-    Film film = new Film();
-    Geografi geografi = new Geografi();
-    Mat mat = new Mat();
-    Matematik matematik = new Matematik();
+    Questions historiaQ1 = new Questions("Mellan vilka år pågick först världskriget?", "1912 - 1917", "1914 - 1918", "1914 - 1919", "1913 - 1918", "1914 - 1918");
+    Questions historiaQ2 = new Questions("Vad hette personen som höll det kända \"Jag har en dröm\" (\"I have a dream\") talet?", "Nelson Mandela", "Barack Obama", "Martin Luther King, jr", "Napoleon", "Martin Luther King, jr");
+    Questions historiaQ3 = new Questions("Vem var Sveriges första statsminister?", "Carl Gustaf", "Carl Johan", "Gustav Vasa", "Louis de Geer", "Louis de Geer");
+    Category historia = new Category("Historia", historiaQ1, historiaQ2, historiaQ3 );
+
     List<String> kategori = List.of("Historia", "Sport", "Film", "Geografi", "Mat", "Matematik");
-    List<Category> allCategories = List.of(historia, sport, film, geografi, mat, matematik);
+    List<Category> allCategories = List.of(historia);
 
     public Object getOutput(String playerChoice) { //Spelaren klickar på "Historia"-knappen och skickar hit
         Object output = null;
@@ -60,12 +60,13 @@ public class Protocol {
         } else if (state == CHOOSING) {
             System.out.println("choosing state");
             output = getQuestions(numberOfQuestions, playerChoice);
+            System.out.println("efter getquestions");
 
             state = ANSWERING;
         } else if (state == ANSWERING) {
             System.out.println("answering state");
             if(currentRound < maxRounds){
-                state = SENDING;
+                state = WAITING;
             }else state = FINISHED;
 
         } else if (state == FINISHED) {
@@ -77,19 +78,24 @@ public class Protocol {
     }
 
     protected List<String> getCategory(){
-        Collections.shuffle(kategori);
-        return List.of(kategori.get(1), kategori.get(2), kategori.get(3), kategori.get(4));
+//        Collections.shuffle(kategori);
+        return List.of(kategori.get(0), kategori.get(1), kategori.get(2), kategori.get(3));
     }
 
     protected List<Questions> getQuestions(int qAmount, String category){
+//        System.out.println("inne i getquestions");
+//        System.out.println(qAmount + " " + category);
+//        System.out.println(allCategories.size());
         List<Questions> questions = new ArrayList<>();
-        for(Category c: allCategories){
-            if(c.category.equals(category)){
-                for (int i = 0; i < qAmount; i++) {
-                    questions.add(c.questions.get(i));
+        for (Category c : allCategories) {
+//            System.out.println(c.getCategory());
+            if (c.getCategory().equals(category)) {
+                for (int j = 0; j < qAmount; j++) {
+                    questions.add(c.questions.get(j));
                 }
             }
         }
+//        System.out.println(questions.size() + " " + questions.get(0).getQ());
         //Ta bort använd kategori
         return questions;
     }

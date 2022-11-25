@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    objOut.writeObject(listString.get(1));
+                    objOut.writeObject(listString.get(0));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -88,7 +89,7 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    objOut.writeObject(listString.get(2));
+                    objOut.writeObject(listString.get(1));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -99,7 +100,7 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    objOut.writeObject(listString.get(3));
+                    objOut.writeObject(listString.get(2));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -110,7 +111,7 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    objOut.writeObject(listString.get(4));
+                    objOut.writeObject(listString.get(3));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -217,20 +218,34 @@ public class GUI extends JFrame {
                     gameScreen.setVisible(false);
                     resultScreen.setVisible(false);
 
-                } else if (fromServer instanceof List<?>) {
-                    System.out.println("instanceof list");
+                }else if (fromServer instanceof GameFinished) {
+                    System.out.println("instanceof gamefinished");
+                    homeScreen.setVisible(false);
+                    loadingScreen.setVisible(false);
+                    categoryScreen.setVisible(false);
+                    gameScreen.setVisible(false);
+                    resultScreen.setVisible(true);
+
+                    //Check winner
+
+                } else if(fromServer instanceof String) {
+                    System.out.println("instance of string");
+                }
+                else {
+                    System.out.println("instanceof list" + fromServer.getClass().getSimpleName());
                     try {
                         listQuestions = (List<Questions>) fromServer;
                         listString = (List<String>) fromServer;
                     } catch (Exception ignore) {
                     }
 
-                    if (!listQuestions.isEmpty() && listQuestions.get(0) instanceof Questions) {
+                    if (listQuestions != null  && listQuestions.size() != 0 && listQuestions.get(0) instanceof Questions) {
                         homeScreen.setVisible(false);
                         loadingScreen.setVisible(false);
                         categoryScreen.setVisible(false);
                         gameScreen.setVisible(true);
                         resultScreen.setVisible(false);
+                        currentQuestion = 0;
 
                         while (!listQuestions.isEmpty()) {
                             answered = false;
@@ -246,20 +261,23 @@ public class GUI extends JFrame {
 
                             //Starta timer när spelaren fått frågan
                             //Få nästa fråga om tiden tar slut eller spelaren ger sitt svar
-//                            startTimer();
-//                            if (answered || timer()) {
-//                                listQuestions.remove(0);
-//                                currentQuestion++;
-//                            }
+                            LocalTime time = LocalTime.now();
+                            if (answered || time.plusSeconds(15) == LocalTime.now()) {
+                                if(!answered){
+                                    answers[currentQuestion] = false;
+                                }
+                                listQuestions.remove(0);
+                                currentQuestion++;
+                            }
                         }
 
                     }
-                    if (!listString.isEmpty() && listString.get(0) instanceof String) {
+                    if (listString != null  && listString.size() != 0&& listString.get(0) instanceof String) {
                         categoryJLabel.setText("Välj kategori");
-                        category1Button.setText(listString.get(1));
-                        category2Button.setText(listString.get(2));
-                        category3Button.setText(listString.get(3));
-                        category4Button.setText(listString.get(4));
+                        category1Button.setText(listString.get(0));
+                        category2Button.setText(listString.get(1));
+                        category3Button.setText(listString.get(2));
+                        category4Button.setText(listString.get(3));
 
                         homeScreen.setVisible(false);
                         loadingScreen.setVisible(false);
@@ -268,16 +286,6 @@ public class GUI extends JFrame {
                         resultScreen.setVisible(false);
 
                     }
-                } else if (fromServer instanceof GameFinished) {
-                    System.out.println("instanceof gamefinished");
-                    homeScreen.setVisible(false);
-                    loadingScreen.setVisible(false);
-                    categoryScreen.setVisible(false);
-                    gameScreen.setVisible(false);
-                    resultScreen.setVisible(true);
-
-                    //Check winner
-
                 }
             }
         } finally {

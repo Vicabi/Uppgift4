@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Sport extends Category {
+public class Sport {
 
     protected String category = "Sport";
     Questions sport1 = new Questions("Var hölls sommar-OS år 2016?", "Rio de Janeiro", "London", "Peking", "Seoul", "Rio de Janeiro");
