@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 import java.util.Properties;
 
 public class ServerPlayer extends Thread {
@@ -49,7 +50,7 @@ public class ServerPlayer extends Thread {
         this.opponent = opponent;
     }
 
-    public void checkWinner(){
+    public void checkWinner() {
 
 //        if(points > opponentPoints){
 //            textOut.println("Du vann!");
@@ -59,11 +60,12 @@ public class ServerPlayer extends Thread {
 //        }
 //        else textOut.println("Det blev oavgjort!");
     }
-    public boolean[][] generateArray(){
+
+    public boolean[][] generateArray() {
         Properties properties = new Properties();
-        try{
+        try {
             properties.load(new FileInputStream("src/Properties.properties"));
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Kunde inte läsa properties");
         }
         int questions = Integer.parseInt(properties.getProperty("QUESTIONS", "2"));
@@ -75,28 +77,62 @@ public class ServerPlayer extends Thread {
     public void run() {
         try {
             objIn = new ObjectInputStream(socket.getInputStream());
-            Protocol protocol = new Protocol();
-            while(true){
-                System.out.println("ServerPlayer run");
-                if(protocol.state != protocol.CHOOSING){
-                    objOut.writeObject(protocol.getOutput(""));
-                    System.out.println("server if");
+//            Protocol protocol = new Protocol();
+            while (true) {
+                if(game.protocol.state == game.protocol.INITIAL){
+                    if(game.currentPlayer != opponent){
+                        objOut.writeObject(game.protocol.getOutput("",true));
+
+                    }
+                    else objOut.writeObject(game.protocol.getOutput("", false));
                 }
-                else {
-                    String temp = (String) objIn.readObject();
-                    objOut.writeObject(protocol.getOutput(temp));
-                    System.out.println("server else");
+                if(game.protocol.state == game.protocol.WAITING){
+                    if(game.currentPlayer != opponent){
+                        objOut.writeObject(game.protocol.getOutput("",true));
+
+                    }
+                    else objOut.writeObject(game.protocol.getOutput("", false));
+
                 }
+                if(game.protocol.state == game.protocol.SENDING_CATEGORIES){
+                    if(game.currentPlayer != opponent){
+                        game.questionsReady = false;
+                        objOut.writeObject(game.protocol.getOutput("",true));
+
+                    }
+                    else objOut.writeObject(game.protocol.getOutput("", false));
+                }
+                if(game.protocol.state == game.protocol.SENDING_QUESTIONS){
+                    if(game.currentPlayer != opponent){
+                        String temp = (String) objIn.readObject();
+                        List<Questions> tempC = (List<Questions>) game.protocol.getOutput(temp, true);
+                        game.setChosenQuestions(tempC);
+                        objOut.writeObject(game.getChosenQuestions());
+                        game.questionsReady = true;
+
+                        game.tempPlayer = game.currentPlayer;
+                        game.currentPlayer = null;
+                    }
+                    else if(game.questionsReady){
+                        objOut.writeObject(game.getChosenQuestions());
+                        game.questionsReady = false;
+                    }
+
+                }
+
+
+
+
             }
 
 
-            //Player Rad 83
+            //TODO: 1 Protocol i game?
 
 
-        }catch (Exception ignore){}
+        } catch (Exception ignore) {
+        }
     }
 }
-
 
 
 //if(game.currentPlayer.getPlayer().equals(player)){
@@ -106,3 +142,28 @@ public class ServerPlayer extends Thread {
 //        choice = textIn.readLine();
 //        }
 //        Category questions = game.getQuestions(choice);
+
+
+//if (protocol.state == protocol.CHOOSING) {
+//        if (game.currentPlayer != opponent) { //Om det är spelarens tur att välja kategori
+//        System.out.println(game.currentPlayer.player + " tur att välja");
+//        String temp = (String) objIn.readObject();
+//        List<Questions> tempC = (List<Questions>) protocol.getOutput(temp);
+//        game.setChosenQuestions(tempC);
+//        objOut.writeObject(game.getChosenQuestions());
+//
+//        if (game.currentPlayer == game.player1) {
+//        game.currentPlayer = game.player2;
+//        System.out.println(game.currentPlayer.player + " väljer nästa gång");
+//
+//        } else if (game.currentPlayer == game.player2) {
+//        game.currentPlayer = game.player1;
+//        System.out.println(game.currentPlayer.player + " väljer nästa gång");
+//        }
+//        } else if (game.currentPlayer == opponent) {
+//        objOut.writeObject(game.getChosenQuestions());
+//        System.out.println("Skickar frågor till" + game.player2.player);
+//        }
+//        } else {
+//        objOut.writeObject(protocol.getOutput(""));
+//        }

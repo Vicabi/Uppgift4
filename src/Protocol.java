@@ -7,10 +7,10 @@ import java.util.Properties;
 public class Protocol {
     final protected int INITIAL = 0;    //Spelare ansluten
     final protected int WAITING = 1;    //Väntar på motståndare
-    final protected int SENDING = 2;   //Skickar kategorier till spelaren
-    final protected int CHOOSING = 3;  //Skickar frågor från vald kategori
-    final protected int ANSWERING = 4;  //Spelarna svarar på frågorna
-    final protected int FINISHED = 5;   //Alla omgångar avslutade
+    final protected int SENDING_CATEGORIES = 2;   //Skickar kategorier till spelaren
+    final protected int SENDING_QUESTIONS = 3;  //Skickar frågor från vald kategori
+    final protected int ANSWERING_QUESTIONS = 4;  //Spelarna svarar på frågorna
+    final protected int GAME_FINISHED = 5;   //Alla omgångar avslutade
 
     protected int state = INITIAL;
 
@@ -22,7 +22,7 @@ public class Protocol {
     Questions historiaQ1 = new Questions("Mellan vilka år pågick först världskriget?", "1912 - 1917", "1914 - 1918", "1914 - 1919", "1913 - 1918", "1914 - 1918");
     Questions historiaQ2 = new Questions("Vad hette personen som höll det kända \"Jag har en dröm\" (\"I have a dream\") talet?", "Nelson Mandela", "Barack Obama", "Martin Luther King, jr", "Napoleon", "Martin Luther King, jr");
     Questions historiaQ3 = new Questions("Vem var Sveriges första statsminister?", "Carl Gustaf", "Carl Johan", "Gustav Vasa", "Louis de Geer", "Louis de Geer");
-    Category historia = new Category("Historia", historiaQ1, historiaQ2, historiaQ3 );
+    Category historia = new Category("Historia", historiaQ1, historiaQ2, historiaQ3);
 
     Questions sportQ1 = new Questions("Var hölls sommar-OS år 2016?", "Rio de Janeiro", "London", "Peking", "Seoul", "Rio de Janeiro");
     Questions sportQ2 = new Questions("Vad heter högsta professionella ligan i England?", "Champions League", "La Liga", "Premier League", "Serie A", "Premier League");
@@ -52,7 +52,7 @@ public class Protocol {
     List<String> kategori = List.of("Historia", "Sport", "Film", "Geografi", "Mat", "Matematik");
     List<Category> allCategories = List.of(historia, sport, film, geografi, mat, matematik);
 
-    public Object getOutput(String playerChoice) { //Spelaren klickar på "Historia"-knappen och skickar hit
+    public Object getOutput(String playerChoice, boolean playerTurn) { //Spelaren klickar på "Historia"-knappen och skickar hit
         Object output = null;
         currentRound = 0;
         properties = new Properties();
@@ -64,35 +64,43 @@ public class Protocol {
         maxRounds = Integer.parseInt(properties.getProperty("ROUNDS", "2"));
         numberOfQuestions = Integer.parseInt(properties.getProperty("QUESTIONS", "2"));
 
-        if (state == INITIAL) {
+        if (state == INITIAL) {         //Spelare ansluten
             System.out.println("initial state");
-            output = new Intro();
+            if(playerTurn){
+                output = new Intro();
 
-            state = WAITING;
-        } else if (state == WAITING) {
+                state = WAITING;
+            }
+            else output = new Intro();
+        } else if (state == WAITING) {  //Väntar på motståndare
             System.out.println("waiting state");
-            output = new Waiting();
+            if(playerTurn){
+                output = new Waiting();
 
-            state = SENDING;
-        } else if (state == SENDING) {
+                state = SENDING_CATEGORIES;
+            }
+            else output = new Waiting();
+        } else if (state == SENDING_CATEGORIES) {  //Skickar kategorier till spelaren
             System.out.println("sending state");
-            output = getCategory();
+            if(playerTurn){
+                output = getCategory();
 
-            currentRound++;
-            state = CHOOSING;
-        } else if (state == CHOOSING) {
+                currentRound++;
+                state = SENDING_QUESTIONS;
+            }
+            else output = new Waiting();
+        } else if (state == SENDING_QUESTIONS) {  //Skickar frågor från vald kategori
             System.out.println("choosing state");
             output = getQuestions(numberOfQuestions, playerChoice);
-            System.out.println("efter getquestions");
 
-            state = ANSWERING;
-        } else if (state == ANSWERING) {
+            state = ANSWERING_QUESTIONS;
+        } else if (state == ANSWERING_QUESTIONS) {  //Spelarna svarar på frågorna
             System.out.println("answering state");
             if(currentRound < maxRounds){
                 state = WAITING;
-            }else state = FINISHED;
+            }else state = GAME_FINISHED;
 
-        } else if (state == FINISHED) {
+        } else if (state == GAME_FINISHED) {  //Alla omgångar avslutade
             System.out.println("finished state");
             output = new GameFinished();
         }
@@ -100,12 +108,14 @@ public class Protocol {
         return output;
     }
 
-    protected List<String> getCategory(){
+    private List<String> getCategory(){
 //        Collections.shuffle(kategori);
+        //Fixa en shuffle metod som fungerar
+
         return List.of(kategori.get(0), kategori.get(1), kategori.get(2), kategori.get(3));
     }
 
-    protected List<Questions> getQuestions(int qAmount, String category){
+    private List<Questions> getQuestions(int qAmount, String category){
 //        System.out.println("inne i getquestions");
 //        System.out.println(qAmount + " " + category);
 //        System.out.println(allCategories.size());
@@ -119,6 +129,7 @@ public class Protocol {
             }
         }
 //        System.out.println(questions.size() + " " + questions.get(0).getQ());
+
         //Ta bort använd kategori
         return questions;
     }

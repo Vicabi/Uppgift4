@@ -226,13 +226,13 @@ public class GUI extends JFrame {
                     gameScreen.setVisible(false);
                     resultScreen.setVisible(true);
 
-                    //Check winner
+                    //TODO: Check winner
 
                 } else if(fromServer instanceof String) {
                     System.out.println("instance of string");
                 }
                 else {
-                    System.out.println("instanceof list" + fromServer.getClass().getSimpleName());
+                    System.out.println("instanceof list");
                     try {
                         listQuestions = (List<Questions>) fromServer;
                         listString = (List<String>) fromServer;

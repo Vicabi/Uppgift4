@@ -1,56 +1,44 @@
+import java.util.List;
+
 public class Game {
-    private int rounds;
-    protected ServerPlayer currentPlayer;
-    protected int p1points;
-    protected int p2points;
+    protected int currentRound;
+    protected ServerPlayer player1;  //Spelare 1
+    protected ServerPlayer player2;  //Spelare 2
+    protected ServerPlayer currentPlayer; //Håller koll på vilken spelare som ska välja kategori
+    protected ServerPlayer tempPlayer;
+    protected int p1points;  //Spelare 1 poäng
+    protected int p2points;  //Spelare 2 poäng
 
-    public int getP1points() {
-        return p1points;
+    protected boolean[][] p1score; //Spelare 1 resultat array
+    protected boolean[][] p2score; //Spelare 2 resultat array
+    protected List<Questions> chosenQuestions;  //Frågor som skickas till den spelare som inte valt kategori
+    protected boolean questionsReady;
+    protected Protocol protocol = new Protocol();
+
+    public void setupScoreArrays(int questions, int rounds){  //Skapar BÅDA spelarnas resultat arrayer
+        p1score = new boolean[questions][rounds];
+        p2score = new boolean[questions][rounds];
+    }
+    public void setP1score(int round,boolean[] roundScore){  //Spara spelarens resultat per omgång
+        p1score[round] = roundScore;
+    }
+    public void setP2score(int round,boolean[] roundScore){
+        p2score[round] = roundScore;
+    }
+    public boolean[][] getP1score(){  //Hämtar spelarens poäng
+        return p1score;
+    }
+    public boolean[][] getP2score(){
+        return p2score;
+    }
+    public void setChosenQuestions(List<Questions> inputQuestions){
+        chosenQuestions = inputQuestions;
+    }
+    public List<Questions> getChosenQuestions(){
+        return chosenQuestions;
     }
 
-    public void setP1points(int p1points) {
-        this.p1points = p1points;
+    public void setCurrentPlayer(ServerPlayer input){
+        currentPlayer = input;
     }
-
-    public int getP2points() {
-        return p2points;
-    }
-
-    public void setP2points(int p2points) {
-        this.p2points = p2points;
-    }
-
-    public ServerPlayer getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public void setCurrentPlayer(ServerPlayer currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
-//    public String[] getCategory(){
-//        Arrays.sort(kategori);
-//        return new String[]{kategori[1], kategori[2], kategori[3], kategori[4]};
-//    }
-//
-//    public Category getQuestions(String category){
-//        for(Category c: allCategories){
-//            if(category.equals(c.category)){
-//                return c;
-//            }
-//        }
-//        return historia;
-//    }
-//
-//
-//    Historia historia = new Historia();
-//    Sport sport = new Sport();
-//    Film film = new Film();
-//    Geografi geografi = new Geografi();
-//    Mat mat = new Mat();
-//    Matematik matematik = new Matematik();
-//    String[] kategori = {"Historia", "Sport", "Film", "Geografi", "Mat", "Matematik"};
-//    List<Category> allCategories = List.of(historia, sport, film, geografi, mat, matematik);
-
-    //Lista med alla kategorier som objekt!
 }
